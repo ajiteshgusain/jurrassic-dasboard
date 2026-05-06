@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 
 function Details() {
   const { id } = useParams();
-  const [info, setInfo] = useState("");
+  // const [info, setInfo] = useState("");
+  const [movie, setMovie] = useState(null);
 
   const dinoNames = {
     1: "Tyrannosaurus rex",
@@ -11,20 +12,39 @@ function Details() {
     3: "Velociraptor",
   };
 
+  // useEffect(() => {
+  //   fetch(`https://api.themoviedb.org/3/search/movie?api_key=63973b7e3464126701b1539ee2ffcda4&query=Jurassic Park`)
+  //     .then((res) => res.json())
+  //     // .then((data) => setInfo(data.extract));
+  //     .then(data => setMovie(data.results[0]));
+  // }, [id]);
+
+
   useEffect(() => {
-    fetch(`https://api.themoviedb.org/3/search/movie?api_key=63973b7e3464126701b1539ee2ffcda4&query=Jurassic Park`)
-      .then((res) => res.json())
-      .then((data) => setInfo(data.extract));
-  }, [id]);
+  fetch(`https://api.themoviedb.org/3/search/movie?api_key=YOUR_API_KEY&query=${dinoNames[id]}`)
+    .then(res => res.json())
+    .then(data => setMovie(data.results[0]));
+}, [id]);
+
+
 
   return (
       <div className="text-white p-6">
 
-    {movie && (
+    {/* {movie && (
       <div className="mt-6 text-left">
         <h2 className="text-2xl font-bold text-green-400">
           {movie.title}
-        </h2>
+        </h2> */}
+
+        {movie && (
+  <div>
+    <h2>{movie.title}</h2>
+    <img src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`} />
+    <p>{movie.overview}</p>
+  </div>
+)}
+
 
         <img
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -40,8 +60,8 @@ function Details() {
       </div>
     )}
 
-  </div>
-);
-}
+//   </div>
+// );
+// }
 
 export default Details;
