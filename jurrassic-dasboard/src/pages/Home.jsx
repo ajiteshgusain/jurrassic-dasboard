@@ -1,18 +1,33 @@
-// import dinosaurs from "../data/dinosaurs";
-// import DinoCard from "../components/DinoCard";
+// import { useState } from "react";
+// import { useNavigate } from "react-router-dom";
 
 // function Home() {
+//   const [search, setSearch] = useState("");
+//   const navigate = useNavigate();
+
+//   const handleSearch = (e) => {
+//     if (e.key === "Enter" && search.trim() !== "") {
+//       navigate(`/details/${search}`);
+//     }
+//   };
+
 //   return (
 //     <div className="p-6">
-//       <h1 className="text-4xl text-green-400 font-bold text-center mb-10">
-//         🦖 Jurassic Park Dashboard
+
+//       <h1 className="text-4xl text-green-500 font-bold text-center mb-6">
+//         🦖 Dinosaur Explorer
 //       </h1>
 
-//       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-//         {dinosaurs.map((dino) => (
-//           <DinoCard key={dino.id} dino={dino} />
-//         ))}
-//       </div>
+//       {/* 🔍 Search */}
+//       <input
+//         type="text"
+//         placeholder="Search any dinosaur..."
+//         value={search}
+//         onChange={(e) => setSearch(e.target.value)}
+//         onKeyDown={handleSearch}
+//         className="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white"
+//       />
+
 //     </div>
 //   );
 // }
@@ -20,37 +35,75 @@
 // export default Home;
 
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import dinosaurs from "../data/dinosaurs";
-import DinoCard from "../components/DinoCard";
 
 function Home() {
   const [search, setSearch] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
 
-  const filtered = dinosaurs.filter((dino) =>
-    dino.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // 🔍 Fetch suggestions from Wikipedia
+  useEffect(() => {
+    if (search.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    fetch(
+      `https://en.wikipedia.org/w/api.php?action=opensearch&search=${search}&limit=5&namespace=0&format=json&origin=*`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setSuggestions(data[1]); // names array
+      });
+  }, [search]);
 
   return (
     <div className="p-6">
 
+      {/* 🦖 Title */}
       <h1 className="text-4xl text-green-400 font-bold text-center mb-6">
-        🦖 Dinosaur Explorer
+        🦖 Dino Explorer
       </h1>
 
-      {/* 🔍 Search */}
+      {/* 🔍 Search Input */}
       <input
         type="text"
-        placeholder="Search dinosaur..."
+        placeholder="Search dinosaurs..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full p-3 mb-6 rounded-lg bg-gray-800 text-white"
+        className="w-full p-3 rounded-lg bg-gray-800 text-white mb-2 outline-none"
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {filtered.map((dino) => (
-          <DinoCard key={dino.id} dino={dino} />
-        ))}
+      {/* 📌 Suggestions with Images */}
+      <div className="bg-gray-900 rounded-lg overflow-hidden">
+
+        {suggestions.map((item, index) => {
+          // 🔍 check if local image exists
+          const local = dinosaurs.find(
+            (d) => d.name.toLowerCase() === item.toLowerCase()
+          );
+
+          return (
+            <Link
+              key={index}
+              to={`/details/${item}`}
+              className="flex items-center gap-3 px-4 py-2 hover:bg-gray-700 border-b border-gray-800"
+            >
+              {/* 🖼 Image */}
+              <img
+                src={local?.image || "https://via.placeholder.com/40"}
+                alt={item}
+                className="w-10 h-10 rounded object-cover"
+              />
+
+              {/* 📝 Name */}
+              <span>{item}</span>
+            </Link>
+          );
+        })}
+
       </div>
 
     </div>
