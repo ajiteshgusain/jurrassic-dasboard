@@ -1,10 +1,11 @@
 import trex from "../assets/trex.png";
 import triceratops from "../assets/triceratops.png";
 import raptor from "../assets/raptor.png";
+
 const dinosaurs = [
   {
     id: 1,
-    name: "T-Rex",
+    name: "Tyrannosaurus",
     type: "Carnivore",
     era: "Cretaceous",
     image: trex,
