@@ -82,7 +82,7 @@ function Home() {
         {suggestions.map((item, index) => {
           // 🔍 check if local image exists
           const local = dinosaurs.find(
-            (d) => d.name.toLowerCase() === item.toLowerCase()
+            (d) => d.name.toLowrCase() === item.toLowerCase()
           );
 
           return (

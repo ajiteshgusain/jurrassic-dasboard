@@ -6,7 +6,7 @@ function Details() {
   const { id } = useParams(); // name
   const navigate = useNavigate();
 
-  const [info, setInfo] = useState(null);
+  const [info,setInfo] = useState(null);
   const [localImage, setLocalImage] = useState(null);
 
   useEffect(() => {
